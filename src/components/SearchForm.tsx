@@ -1,19 +1,13 @@
 import { useEffect, useState } from "react";
 
-export default function SearchForm() {
-	const [searchtext, setseachtext] = useState("");
-	useEffect(() => {
-		if (!searchtext) return 
-		fetch(`https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchtext}`)
-		.then((res) => res.json())
-		.then((data) => console.log(data))
-
-
-	} ,[searchtext])
-	
-
-
-
+type searchformtype = {
+	searchtext: string;
+	setsearchtext: React.Dispatch<React.SetStateAction<string>>;
+};
+export default function SearchForm({
+	searchtext,
+	setsearchtext,
+}: searchformtype) {
 	return (
 		<form action="#" className="search" onSubmit={(e) => e.preventDefault()}>
 			<button type="submit">
@@ -22,17 +16,14 @@ export default function SearchForm() {
 
 			<input
 				onChange={(e) => {
-					setseachtext(e.target.value);
-					
+					setsearchtext(e.target.value);
 				}}
 				spellCheck="false"
 				type="text"
 				required
 				placeholder="Find remote developer jobs..."
 				value={searchtext}
-
 			/>
 		</form>
 	);
-	
 }

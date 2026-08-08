@@ -1,11 +1,15 @@
 import JobList from "./JobList";
 import Sidebar from "./Sidebar";
 
-export default function Container() {
+type typecontainer = {
+	jobitems: [];
+	setjobitems: React.Dispatch<React.SetStateAction<jobitem[]>>;
+};
+export default function Container({ jobitems, setjobitems }: typecontainer) {
 	return (
 		<div className="container">
-			<Sidebar />
-			<JobList />
+			<Sidebar jobitems={jobitems} setjobitems={setjobitems} />
+			<JobList jobitems={jobitems} />
 		</div>
 	);
 }
