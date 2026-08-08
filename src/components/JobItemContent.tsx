@@ -1,4 +1,5 @@
 import BookmarkIcon from "./BookmarkIcon";
+import JobListItem from "./JobListItem";
 
 export default function JobItemContent() {
 	return (
