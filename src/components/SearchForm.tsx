@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 type searchformtype = {
 	searchtext: string;
 	setsearchtext: React.Dispatch<React.SetStateAction<string>>;

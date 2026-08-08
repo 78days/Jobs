@@ -1,13 +1,21 @@
+import type { JobItem } from "../../types.ts";
 import JobListItem from "./JobListItem";
-
-export function JobList({ jobitems }) {
+import Spinner from "./Spinner";
+export default function JobList({
+	jobitems,
+	isloading,
+}: {
+	jobitems: JobItem[];
+	isloading: boolean;
+}) {
 	return (
 		<ul className="job-list">
-			{jobitems.map((jobitem) => (
-				<JobListItem key={jobitem.id} jobitem={jobitem} />
-			))}
+			{isloading && <Spinner />}
+
+			{!isloading &&
+				jobitems.map((jobitem) => (
+					<JobListItem key={jobitem.id} jobitem={jobitem} />
+				))}
 		</ul>
 	);
 }
-
-export default JobList;

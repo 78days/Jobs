@@ -1,15 +1,7 @@
-import BookmarkIcon from "./BookmarkIcon";
-import Logo from "./Logo";
-import SearchForm from "./SearchForm";
+export default function Header({ children }: { children: React.ReactNode }) {
+	return <header className="header">{children}</header>;
+}
 
-export default function Header({ searchtext, setsearchtext }) {
-	return (
-		<header className="header">
-			<div className="header__top">
-				<Logo />
-				<BookmarkIcon />
-			</div>
-			<SearchForm searchtext={searchtext} setsearchtext={setsearchtext} />
-		</header>
-	);
+export function Headertop({ children }: { children: React.ReactNode }) {
+	return <div className="header__top">{children}</div>;
 }

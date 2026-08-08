@@ -1,30 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Usejobitems from "../../hook";
 import Background from "./Background.tsx";
+import BookmarkIcon from "./BookmarkIcon";
 import Container from "./Container";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header, { Headertop } from "./Header";
+import JobItemContent from "./JobItemContent";
+import JobList from "./JobList";
+import Logo from "./Logo";
+import Pagination from "./PaginationControls";
+import ResultsCount from "./ResultsCount";
+import SearchForm from "./SearchForm";
+import Sidebar from "./Sidebar";
+import Sorting from "./SortingControls";
 
 function App() {
-	const [jobitems, setjobitems] = useState([]);
 	const [searchtext, setsearchtext] = useState("");
-	useEffect(() => {
-		if (!searchtext) return;
-		const fetchdata = async () => {
-			const response = await fetch(
-				`https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchtext}`,
-			);
-			const data = await response.json();
-			console.log(data);
-			setjobitems(data.jobItems);
-		};
-		fetchdata();
-	}, [searchtext]);
-
+	const { jobitemssliced, isloading } = Usejobitems({ searchtext });
 	return (
 		<>
 			<Background />
-			<Header searchtext={searchtext} setsearchtext={setsearchtext} />
-			<Container jobitems={jobitems} setjobitems={setjobitems} />
+			<Header>
+				<Headertop>
+					<Logo />
+					<BookmarkIcon />
+				</Headertop>
+				<SearchForm searchtext={searchtext} setsearchtext={setsearchtext} />
+			</Header>
+			<Container>
+				<Sidebar>
+					<div className="sidebar__top">
+						<ResultsCount />
+						<Sorting />
+					</div>
+					<JobList jobitems={jobitemssliced} isloading={isloading} />
+					<Pagination />
+				</Sidebar>
+				<JobItemContent />
+			</Container>
 			<Footer />
 		</>
 	);
