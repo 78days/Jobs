@@ -42,22 +42,24 @@ export function Useactiveid() {
 
 export function Usejobitem(id: number | null) {
 	const [jobitem, setjobitem] = useState(null);
+	const [isloading, setisloading] = useState(false);
 
 	useEffect(() => {
 		if (!id) return;
 		const fetchdata = async () => {
+			setisloading(true);
 			const response = await fetch(`${BASE_URL}/${id}`);
 			const data = await response.json();
+			setisloading(false);
 			setjobitem(data.jobItem);
 		};
 
 		fetchdata();
 	}, [id]);
-	return jobitem;
+	return { jobitem, isloading };
 }
 
 export function useactivejobitem() {
 	const activeid = Useactiveid();
-	const jobitem = Usejobitem(activeid);
-	return jobitem
+	return Usejobitem(activeid);
 }

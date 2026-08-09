@@ -1,5 +1,8 @@
 import { useState } from "react";
-import Usejobitems, { Useactiveid, useactivejobitem, Usejobitem } from "../../hook";
+import Usejobitems, {
+
+	useactivejobitem,
+} from "../../hook";
 import Background from "./Background.tsx";
 import BookmarkIcon from "./BookmarkIcon";
 import Container from "./Container";
@@ -17,7 +20,7 @@ import Sorting from "./SortingControls";
 function App() {
 	const [searchtext, setsearchtext] = useState("");
 	const { jobitemssliced: jobitems, isloading } = Usejobitems({ searchtext });
-	const jobitem = useactivejobitem();
+	const { jobitem, isloading: isloadingjob } = useactivejobitem();
 
 	return (
 		<>
@@ -38,7 +41,7 @@ function App() {
 					<JobList jobitems={jobitems} isloading={isloading} />
 					<Pagination />
 				</Sidebar>
-				<JobItemContent jobitem={jobitem} />
+				<JobItemContent jobitem={jobitem} isloading={isloadingjob}/>
 			</Container>
 			<Footer />
 		</>

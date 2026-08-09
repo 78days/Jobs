@@ -44,7 +44,7 @@ type TypeJobItem = {
 export default function JobListItem({ jobitem }: TypeJobItem) {
 	return (
 		<li className="job-item">
-			<a href={`/jobs/${jobitem.id}`} className="job-item__link">
+			<a href={`#${jobitem.id}`} className="job-item__link">
 				<div className="job-item__badge">{jobitem.badgeLetters}</div>
 
 				<div className="job-item__middle">
