@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BASE_URL } from "./constants";
 import type { JobItem } from "./types";
 
 export default function Usejobitems({ searchtext }: { searchtext: string }) {
@@ -37,4 +38,26 @@ export function Useactiveid() {
 		};
 	}, []);
 	return activeid;
+}
+
+export function Usejobitem(id: number | null) {
+	const [jobitem, setjobitem] = useState(null);
+
+	useEffect(() => {
+		if (!id) return;
+		const fetchdata = async () => {
+			const response = await fetch(`${BASE_URL}/${id}`);
+			const data = await response.json();
+			setjobitem(data.jobItem);
+		};
+
+		fetchdata();
+	}, [id]);
+	return jobitem;
+}
+
+export function useactivejobitem() {
+	const activeid = Useactiveid();
+	const jobitem = Usejobitem(activeid);
+	return jobitem
 }
