@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import type { JobItem } from "./types";
 
 export default function Usejobitems({ searchtext }: { searchtext: string }) {
-	const [jobitems, setjobitems] = useState([]);
+	const [jobitems, setjobitems] = useState<JobItem[]>([]);
 	const [isloading, setisloading] = useState(false);
 
 	useEffect(() => {
@@ -18,6 +19,22 @@ export default function Usejobitems({ searchtext }: { searchtext: string }) {
 		};
 		fetchdata();
 	}, [searchtext]);
-    const jobitemssliced = jobitems.slice(0,7)
+	const jobitemssliced = jobitems.slice(0, 7);
 	return { jobitemssliced, isloading };
+}
+
+export function Useactiveid() {
+	const [activeid, setactiveid] = useState<null | number>(null);
+	const hashchangefunction = () => {
+		const id = Number(window.location.hash.slice(1));
+		setactiveid(id);
+	};
+	useEffect(() => {
+		window.addEventListener("hashchange", hashchangefunction);
+
+		return () => {
+			window.removeEventListener("hashchange", hashchangefunction);
+		};
+	}, []);
+	return activeid;
 }

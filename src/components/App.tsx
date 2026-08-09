@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Usejobitems from "../../hook";
+import { useEffect, useState } from "react";
+import Usejobitems, { Useactiveid } from "../../hook";
 import Background from "./Background.tsx";
 import BookmarkIcon from "./BookmarkIcon";
 import Container from "./Container";
@@ -16,7 +16,9 @@ import Sorting from "./SortingControls";
 
 function App() {
 	const [searchtext, setsearchtext] = useState("");
-	const { jobitemssliced, isloading } = Usejobitems({ searchtext });
+	const { jobitemssliced: jobitems, isloading } = Usejobitems({ searchtext });
+	const activeid = Useactiveid();
+	console.log(activeid);
 	return (
 		<>
 			<Background />
@@ -33,7 +35,7 @@ function App() {
 						<ResultsCount />
 						<Sorting />
 					</div>
-					<JobList jobitems={jobitemssliced} isloading={isloading} />
+					<JobList jobitems={jobitems} isloading={isloading} />
 					<Pagination />
 				</Sidebar>
 				<JobItemContent />
