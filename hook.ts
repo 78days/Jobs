@@ -56,10 +56,12 @@ export function Usejobitem(id: number | null) {
 
 		fetchdata();
 	}, [id]);
-	return { jobitem, isloading };
+	return { jobitem, isloading } as const;
 }
 
 export function useactivejobitem() {
 	const activeid = Useactiveid();
 	return Usejobitem(activeid);
 }
+
+/// 140

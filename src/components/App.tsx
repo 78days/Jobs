@@ -1,8 +1,5 @@
 import { useState } from "react";
-import Usejobitems, {
-
-	useactivejobitem,
-} from "../../hook";
+import Usejobitems, { useactivejobitem } from "../../hook";
 import Background from "./Background.tsx";
 import BookmarkIcon from "./BookmarkIcon";
 import Container from "./Container";
@@ -41,7 +38,7 @@ function App() {
 					<JobList jobitems={jobitems} isloading={isloading} />
 					<Pagination />
 				</Sidebar>
-				<JobItemContent jobitem={jobitem} isloading={isloadingjob}/>
+				<JobItemContent jobitem={jobitem} isloading={isloadingjob} />
 			</Container>
 			<Footer />
 		</>
