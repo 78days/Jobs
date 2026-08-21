@@ -3,11 +3,19 @@ export default function Footer() {
 		<footer className="footer">
 			<small>
 				<p>
-					© Copyright by{" "}
-					<a href="https://bytegrad.com" target="_blank" rel="noopener">
-						ByteGrad.com
+					<p>&copy; Copyright by{" "}
+					<a
+						href="https://github.com/78days"
+						target="_blank"
+						rel="noopener"
+						className="footer__link"
+					>
+						78days
 					</a>
-					. Intended for learning or your portfolio.
+					</p>
+						
+					
+					Intended for learning or your portfolio.
 				</p>
 			</small>
 
