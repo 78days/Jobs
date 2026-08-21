@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { useEffect, useState } from "react";
-
 import { BASE_URL } from "./constants";
 import type { JobItem } from "./types";
 
@@ -14,14 +14,14 @@ export default function Usejobitems({ searchtext }: { searchtext: string }) {
 		const fetchdata = async () => {
 			setisloading(true);
 
-			const response = await fetch(
+			const response = await axios.get(
 				`https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchtext}`,
 			);
 
-			const data = await response.json();
+			
 
 			setisloading(false);
-			setjobitems(data.jobItems);
+			setjobitems(response.data.jobItems);
 		};
 
 		fetchdata();
@@ -63,10 +63,10 @@ export function Usejobitem(id: number | null) {
 		queryFn: async () => {
 			if (!id) return null;
 
-			const response = await fetch(`${BASE_URL}/${id}`);
-			const data = await response.json();
+			const response = await axios.get(`${BASE_URL}/${id}`);
+			
 
-			return data.jobItem;
+			return response.data.jobItem;
 		},
 
 		staleTime: 1000 * 60 * 60,
