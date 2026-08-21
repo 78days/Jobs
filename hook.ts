@@ -20,8 +20,9 @@ export default function Usejobitems({ searchtext }: { searchtext: string }) {
 		};
 		fetchdata();
 	}, [searchtext]);
+	const totalnumberofresults = jobitems.length
 	const jobitemssliced = jobitems.slice(0, 7);
-	return { jobitemssliced, isloading };
+	return { jobitemssliced, isloading  , totalnumberofresults};
 }
 
 export function Useactiveid() {
@@ -65,3 +66,18 @@ export function useactivejobitem() {
 }
 
 /// 140
+
+
+export function UseDebounce<T>(value: T, delay: number) {
+	const [debouncedvalue, setdebouncedvalue] = useState<T>(value);
+	useEffect(() => {
+		const timerid = setTimeout(() => {
+			setdebouncedvalue(value);
+		}, delay);
+		return () => {
+			clearTimeout(timerid);
+		};
+	}, [value, delay]);
+
+	return debouncedvalue;
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Usejobitems, { useactivejobitem } from "../../hook";
+import Usejobitems, { useactivejobitem, UseDebounce } from "../../hook";
 import Background from "./Background.tsx";
 import BookmarkIcon from "./BookmarkIcon";
 import Container from "./Container";
@@ -16,8 +16,14 @@ import Sorting from "./SortingControls";
 
 function App() {
 	const [searchtext, setsearchtext] = useState("");
-	const { jobitemssliced: jobitems, isloading } = Usejobitems({ searchtext });
+	const debouncedsearchtext  = UseDebounce(searchtext , 200)
 	const { jobitem, isloading: isloadingjob } = useactivejobitem();
+	
+	const { jobitemssliced: jobitems, isloading   ,totalnumberofresults } = Usejobitems({ searchtext: debouncedsearchtext });
+
+	
+
+
 
 	return (
 		<>
@@ -32,7 +38,7 @@ function App() {
 			<Container>
 				<Sidebar>
 					<div className="sidebar__top">
-						<ResultsCount />
+						<ResultsCount totalnumberofresults={totalnumberofresults}/>
 						<Sorting />
 					</div>
 					<JobList jobitems={jobitems} isloading={isloading} />

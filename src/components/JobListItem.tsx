@@ -39,11 +39,12 @@ type TypeJobItem = {
 		company: string;
 		daysAgo: number;
 	};
+	isactive : boolean
 };
 
-export default function JobListItem({ jobitem }: TypeJobItem) {
+export default function JobListItem({ jobitem  , isactive}: TypeJobItem) {
 	return (
-		<li className="job-item">
+		<li className={`job-item ${isactive ? "job-item--active" : ""}`}>
 			<a href={`#${jobitem.id}`} className="job-item__link">
 				<div className="job-item__badge">{jobitem.badgeLetters}</div>
 
