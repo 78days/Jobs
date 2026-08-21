@@ -73,7 +73,7 @@ export default function JobItemContent({ jobitem, isloading }: jobitemprop) {
 							</p>
 						</div>
 						<ul className="qualifications__list">
-							{jobitem.qualifications.map((qualification: string ) => (
+							{jobitem.qualifications.map((qualification: string) => (
 								<li key={jobitem.id} className="qualifications__item">
 									{qualification}
 								</li>

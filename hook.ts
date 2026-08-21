@@ -1,108 +1,104 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 import { BASE_URL } from "./constants";
 import type { JobItem } from "./types";
 
-export default function Usejobitems({
-  searchtext,
-}: {
-  searchtext: string;
-}) {
-  const [jobitems, setjobitems] = useState<JobItem[]>([]);
-  const [isloading, setisloading] = useState(false);
+export default function Usejobitems({ searchtext }: { searchtext: string }) {
+	const [jobitems, setjobitems] = useState<JobItem[]>([]);
+	const [isloading, setisloading] = useState(false);
 
-  useEffect(() => {
-    if (!searchtext) return;
+	useEffect(() => {
+		if (!searchtext) return;
 
-    const fetchdata = async () => {
-      setisloading(true);
+		const fetchdata = async () => {
+			setisloading(true);
 
-      const response = await fetch(
-        `https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchtext}`
-      );
+			const response = await fetch(
+				`https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchtext}`,
+			);
 
-      const data = await response.json();
+			const data = await response.json();
 
-      setisloading(false);
-      setjobitems(data.jobItems);
-    };
+			setisloading(false);
+			setjobitems(data.jobItems);
+		};
 
-    fetchdata();
-  }, [searchtext]);
+		fetchdata();
+	}, [searchtext]);
 
-  const totalnumberofresults = jobitems.length;
-  const jobitemssliced = jobitems.slice(0, 7);
+	const totalnumberofresults = jobitems.length;
+	const jobitemssliced = jobitems.slice(0, 7);
 
-  return {
-    jobitemssliced,
-    isloading,
-    totalnumberofresults,
-  };
+	return {
+		jobitemssliced,
+		isloading,
+		totalnumberofresults,
+	};
 }
 
 export function Useactiveid() {
-  const [activeid, setactiveid] = useState<number | null>(null);
+	const [activeid, setactiveid] = useState<number | null>(null);
 
-  const hashchangefunction = () => {
-    const id = Number(window.location.hash.slice(1));
-    setactiveid(id);
-  };
+	const hashchangefunction = () => {
+		const id = Number(window.location.hash.slice(1));
+		setactiveid(id);
+	};
 
-  useEffect(() => {
-    window.addEventListener("hashchange", hashchangefunction);
+	useEffect(() => {
+		window.addEventListener("hashchange", hashchangefunction);
 
-    return () => {
-      window.removeEventListener("hashchange", hashchangefunction);
-    };
-  }, []);
+		return () => {
+			window.removeEventListener("hashchange", hashchangefunction);
+		};
+	}, []);
 
-  return activeid;
+	return activeid;
 }
 
 export function Usejobitem(id: number | null) {
-  const { data, isLoading } = useQuery({
-    queryKey: ["job-item", id],
+	const { data, isLoading } = useQuery({
+		queryKey: ["job-item", id],
 
-    queryFn: async () => {
-      if (!id) return null;
+		queryFn: async () => {
+			if (!id) return null;
 
-      const response = await fetch(`${BASE_URL}/${id}`);
-      const data = await response.json();
+			const response = await fetch(`${BASE_URL}/${id}`);
+			const data = await response.json();
 
-      return data.jobItem;
-    },
+			return data.jobItem;
+		},
 
-    staleTime: 1000 * 60 * 60,
-    retry: false,
-    enabled: Boolean(id),
-    refetchOnWindowFocus: false,
-  });
+		staleTime: 1000 * 60 * 60,
+		retry: false,
+		enabled: Boolean(id),
+		refetchOnWindowFocus: false,
+	});
 
-  return {
-    jobitem: data,
-    isLoading,
-  } as const;
+	return {
+		jobitem: data,
+		isLoading,
+	} as const;
 }
 
 export function useactivejobitem() {
-  const activeid = Useactiveid();
+	const activeid = Useactiveid();
 
-  return Usejobitem(activeid);
+	return Usejobitem(activeid);
 }
 
 export function UseDebounce<T>(value: T, delay = 500) {
-  const [debouncedvalue, setdebouncedvalue] = useState<T>(value);
+	const [debouncedvalue, setdebouncedvalue] = useState<T>(value);
 
-  useEffect(() => {
-    const timerid = setTimeout(() => {
-      setdebouncedvalue(value);
-    }, delay);
+	useEffect(() => {
+		const timerid = setTimeout(() => {
+			setdebouncedvalue(value);
+		}, delay);
 
-    return () => {
-      clearTimeout(timerid);
-    };
-  }, [value, delay]);
+		return () => {
+			clearTimeout(timerid);
+		};
+	}, [value, delay]);
 
-  return debouncedvalue;
+	return debouncedvalue;
 }
