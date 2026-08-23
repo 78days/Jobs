@@ -1,10 +1,10 @@
 type searchformtype = {
-	searchtext: string;
-	setsearchtext: React.Dispatch<React.SetStateAction<string>>;
+	searchText: string;
+	setSearchText: React.Dispatch<React.SetStateAction<string>>;
 };
 export default function SearchForm({
-	searchtext,
-	setsearchtext,
+	searchText,
+	setSearchText,
 }: searchformtype) {
 	return (
 		<form action="#" className="search" onSubmit={(e) => e.preventDefault()}>
@@ -14,13 +14,13 @@ export default function SearchForm({
 
 			<input
 				onChange={(e) => {
-					setsearchtext(e.target.value);
+					setSearchText(e.target.value);
 				}}
 				spellCheck="false"
 				type="text"
 				required
 				placeholder="Find remote developer jobs..."
-				value={searchtext}
+				value={searchText}
 			/>
 		</form>
 	);

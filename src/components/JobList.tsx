@@ -1,4 +1,4 @@
-import { Useactiveid } from "../../hook.ts";
+import { useActiveId } from "../../hook.ts";
 import type { JobItem } from "../../types.ts";
 import JobListItem from "./JobListItem";
 import Spinner from "./Spinner";
@@ -9,7 +9,7 @@ export default function JobList({
 	jobitems: JobItem[];
 	isloading: boolean;
 }) {
-	const activeid = Useactiveid();
+	const activeid = useActiveId();
 	return (
 		<ul className="job-list">
 			{isloading && <Spinner />}

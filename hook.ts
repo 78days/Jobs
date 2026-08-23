@@ -1,104 +1,208 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
+
 import { BASE_URL } from "./constants";
 import type { JobItem } from "./types";
+import toast from "react-hot-toast";
 
-export default function Usejobitems({ searchtext }: { searchtext: string }) {
-	const [jobitems, setjobitems] = useState<JobItem[]>([]);
-	const [isloading, setisloading] = useState(false);
+/* =========================================================
+   useJobItems
 
-	useEffect(() => {
-		if (!searchtext) return;
+   Fetches the list of jobs based on the search text.
+   ========================================================= */
 
-		const fetchdata = async () => {
-			setisloading(true);
+export function useJobItems({
+    searchText,
+}: {
+    searchText: string;
+}) {
+    const { data, isPending, isFetching } = useQuery<JobItem[]>({
+        queryKey: ["job-items", searchText],
 
-			const response = await axios.get(
-				`https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchtext}`,
-			);
+        queryFn: async () => {
+            try {
+                const response = await axios.get(
+                    `${BASE_URL}?search=${encodeURIComponent(searchText)}`
+                );
+                return response.data.jobItems;
+            } catch (error : unknown)  {
+                toast.error(`There was an error fetching the jobs. ${error.message}`);
+                throw error; // CRITICAL: Tells React Query the request failed
+            }
+        },
 
-			
+        // Don't make a request when search is empty
+        enabled: Boolean(searchText),
 
-			setisloading(false);
-			setjobitems(response.data.jobItems);
-		};
+        // Data remains fresh for 1 hour
+        staleTime: 1000 * 60 * 60,
 
-		fetchdata();
-	}, [searchtext]);
+        retry: false,
+    });
 
-	const totalnumberofresults = jobitems.length;
-	const jobitemssliced = jobitems.slice(0, 7);
+    const jobItems = data ?? [];
 
-	return {
-		jobitemssliced,
-		isloading,
-		totalnumberofresults,
-	};
+    // Only show first 7 jobs
+    const jobItemsSliced = jobItems.slice(0, 7);
+
+    // Total results before slicing
+    const totalNumberOfResults = jobItems.length;
+
+    return {
+        jobItems: jobItemsSliced,
+        isLoading: isPending, // Note: TanStack v5 renamed isLoading to isPending
+        isFetching,
+        totalNumberOfResults,
+    };
 }
 
-export function Useactiveid() {
-	const [activeid, setactiveid] = useState<number | null>(null);
 
-	const hashchangefunction = () => {
-		const id = Number(window.location.hash.slice(1));
-		setactiveid(id);
-	};
+/* =========================================================
+   useActiveId
 
-	useEffect(() => {
-		window.addEventListener("hashchange", hashchangefunction);
+   Reads the selected job ID from the URL hash.
+   ========================================================= */
 
-		return () => {
-			window.removeEventListener("hashchange", hashchangefunction);
-		};
-	}, []);
+export function useActiveId() {
+    const [activeId, setActiveId] = useState<number | null>(null);
 
-	return activeid;
+    useEffect(() => {
+        const hashChangeFunction = () => {
+            const hash = window.location.hash.slice(1);
+
+            // No hash
+            if (!hash) {
+                setActiveId(null);
+                return;
+            }
+
+            const id = Number(hash);
+
+            // Invalid hash
+            if (Number.isNaN(id)) {
+                setActiveId(null);
+                return;
+            }
+
+            setActiveId(id);
+        };
+
+        // Check the current hash immediately
+        hashChangeFunction();
+
+        // Listen for future hash changes
+        window.addEventListener(
+            "hashchange",
+            hashChangeFunction
+        );
+
+        return () => {
+            window.removeEventListener(
+                "hashchange",
+                hashChangeFunction
+            );
+        };
+    }, []);
+
+    return activeId;
 }
 
-export function Usejobitem(id: number | null) {
-	const { data, isLoading } = useQuery({
-		queryKey: ["job-item", id],
 
-		queryFn: async () => {
-			if (!id) return null;
+/* =========================================================
+   useJobItem
 
-			const response = await axios.get(`${BASE_URL}/${id}`);
-			
+   Fetches one specific job.
+   ========================================================= */
 
-			return response.data.jobItem;
-		},
+export function useJobItem(id: number | null) {
+    const {
+        data,
+        isPending,
+        isError,
+        error,
+    } = useQuery<JobItem>({
+        queryKey: ["job-item", id],
 
-		staleTime: 1000 * 60 * 60,
-		retry: false,
-		enabled: Boolean(id),
-		refetchOnWindowFocus: false,
-	});
+        queryFn: async () => {
+            const response = await axios.get(
+                `${BASE_URL}/${id}`
+            );
+            return response.data.jobItem;
+        },
 
-	return {
-		jobitem: data,
-		isLoading,
-	} as const;
+        // Only fetch when an ID exists
+        enabled: Boolean(id),
+
+        // Cache/freshness
+        staleTime: 1000 * 60 * 60,
+
+        // Don't automatically retry failed requests
+        retry: false,
+
+        // Refetch when browser window gets focus
+        refetchOnWindowFocus: true,
+    });
+
+    return {
+        jobItem: data,
+        isLoading: isPending,
+        isError,
+        error,
+    };
 }
 
-export function useactivejobitem() {
-	const activeid = Useactiveid();
 
-	return Usejobitem(activeid);
+/* =========================================================
+   useActiveJobItem
+
+   Combines URL hash with specific job fetching.
+   ========================================================= */
+
+export function useActiveJobItem() {
+    const activeId = useActiveId();
+
+    const {
+        jobItem,
+        isLoading,
+        isError,
+        error,
+    } = useJobItem(activeId);
+
+    return {
+        jobItem,
+        isLoading,
+        isError,
+        error,
+        activeId,
+    };
 }
 
-export function UseDebounce<T>(value: T, delay = 500) {
-	const [debouncedvalue, setdebouncedvalue] = useState<T>(value);
 
-	useEffect(() => {
-		const timerid = setTimeout(() => {
-			setdebouncedvalue(value);
-		}, delay);
+/* =========================================================
+   useDebounce
 
-		return () => {
-			clearTimeout(timerid);
-		};
-	}, [value, delay]);
+   Waits until the user stops changing a value.
+   ========================================================= */
 
-	return debouncedvalue;
+export function useDebounce<T>(
+    value: T,
+    delay = 500
+) {
+    const [
+        debouncedValue,
+        setDebouncedValue,
+    ] = useState<T>(value);
+
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(timerId);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
 }
