@@ -21,13 +21,21 @@ export function useJobItems({
         queryKey: ["job-items", searchText],
 
         queryFn: async () => {
+			let errormessage = ""
             try {
                 const response = await axios.get(
                     `${BASE_URL}?search=${encodeURIComponent(searchText)}`
                 );
                 return response.data.jobItems;
             } catch (error : unknown)  {
-                toast.error(`There was an error fetching the jobs. ${error.message}`);
+				if(error instanceof Error){
+					errormessage = error.message
+
+				}
+				else{
+					errormessage = "An unknown error occurred"
+				}
+                toast.error(`There was an error fetching the jobs. ${errormessage}`);
                 throw error; // CRITICAL: Tells React Query the request failed
             }
         },
@@ -44,13 +52,12 @@ export function useJobItems({
     const jobItems = data ?? [];
 
     // Only show first 7 jobs
-    const jobItemsSliced = jobItems.slice(0, 7);
 
     // Total results before slicing
     const totalNumberOfResults = jobItems.length;
 
     return {
-        jobItems: jobItemsSliced,
+        jobItems,
         isLoading: isPending, // Note: TanStack v5 renamed isLoading to isPending
         isFetching,
         totalNumberOfResults,

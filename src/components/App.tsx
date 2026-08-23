@@ -20,13 +20,15 @@ import SearchForm from "./SearchForm";
 import Sidebar from "./Sidebar";
 import Sorting from "./SortingControls";
 import { Toaster } from "react-hot-toast";
+import { resultsPerPage } from "../../constants.ts";
 
 
 function App() {
 
-    /* =====================================================
-       SEARCH STATE
-       ===================================================== */
+
+
+	const [currentPage ,  setCurrentPage] = useState(1)
+	
 
     const [
         searchText,
@@ -34,47 +36,18 @@ function App() {
     ] = useState("");
 
 
-    /* =====================================================
-       DEBOUNCE SEARCH
-
-       User types → wait 200ms → API request
-       ===================================================== */
-
     const debouncedSearchText = useDebounce(
         searchText,
         200
     );
 
 
-    /* =====================================================
-       ACTIVE JOB
-
-       Gets the job ID from:
-
-       URL → #123
-
-       Then fetches:
-
-       GET /123
-       ===================================================== */
 
     const {
         jobItem,
         isLoading: isLoadingJob,
     } = useActiveJobItem();
 
-
-    /* =====================================================
-       JOB LIST
-
-       Gets jobs based on search text.
-
-       Example:
-
-       searchText = "react"
-
-       → GET /?search=react
-       ===================================================== */
 
     const {
         jobItems,
@@ -83,11 +56,19 @@ function App() {
     } = useJobItems({
         searchText: debouncedSearchText,
     });
+	const jobItemsSliced = jobItems.slice(currentPage * resultsPerPage - resultsPerPage, currentPage*resultsPerPage);
+	const totalNumberOfPages = Math.ceil(totalNumberOfResults / 7)
 
 
-    /* =====================================================
-       RENDER
-       ===================================================== */
+	const handleChangePage = (direction : "next" | "previous") => {
+		if(direction==="next"){
+			setCurrentPage((prev) => prev + 1)
+		}
+		else{
+			setCurrentPage((prev) => prev - 1)
+		}
+	}
+
 
     return (
         <>
@@ -143,13 +124,13 @@ function App() {
 
                     {/* Job list */}
                     <JobList
-                        jobitems={jobItems}
+                        jobitems={jobItemsSliced}
                         isloading={isLoading}
                     />
 
 
                     {/* Pagination */}
-                    <Pagination />
+                    <Pagination onclick = {handleChangePage} currentPage = {currentPage} totalNumberOfPages = {totalNumberOfPages}/>
 
                 </Sidebar>
 
