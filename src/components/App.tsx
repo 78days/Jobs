@@ -1,3 +1,6 @@
+//161-c
+
+
 import { useState } from "react";
 
 import {
@@ -7,7 +10,6 @@ import {
 } from "../../hook";
 
 import Background from "./Background.tsx";
-import BookmarkIcon from "./BookmarkIcon";
 import Container from "./Container";
 import Footer from "./Footer";
 import Header, { Headertop } from "./Header";
@@ -21,6 +23,7 @@ import Sidebar from "./Sidebar";
 import Sorting from "./SortingControls";
 import { Toaster } from "react-hot-toast";
 import { resultsPerPage } from "../../constants.ts";
+import { type typeSortBy } from "../../types.ts";
 
 
 function App() {
@@ -56,8 +59,13 @@ function App() {
     } = useJobItems({
         searchText: debouncedSearchText,
     });
-	const jobItemsSliced = jobItems.slice(currentPage * resultsPerPage - resultsPerPage, currentPage*resultsPerPage);
-	const totalNumberOfPages = Math.ceil(totalNumberOfResults / 7)
+
+    const [sortBy , setSortBy] = useState< typeSortBy>("relevant")
+   
+
+	const totalNumberOfPages = Math.ceil(totalNumberOfResults / resultsPerPage)
+
+
 
 
 	const handleChangePage = (direction : "next" | "previous") => {
@@ -69,26 +77,40 @@ function App() {
 		}
 	}
 
+    const handleChangeSortBy = (newSortBy: typeSortBy) => {
+        setSortBy(newSortBy )
+        setCurrentPage(1)
+    }
+
+    const jobItemsSorted = [...jobItems].sort((a,b) => {
+        if(sortBy === "relevant"){
+            return b.relevanceScore - a.relevanceScore
+        }
+        else{
+            return a.daysAgo - b.daysAgo
+        }
+    })
+    const jobItemsSlicedandSorted = jobItemsSorted.slice(currentPage * resultsPerPage - resultsPerPage, currentPage*resultsPerPage);
+    
+
 
     return (
         <>
-            {/* Background */}
+           
             <Background />
 
 
-            {/* Header */}
+           
             <Header>
 
-                <Headertop>
+				<Headertop>
 
                     <Logo />
 
-                    <BookmarkIcon />
 
                 </Headertop>
 
 
-                {/* Search */}
                 <SearchForm
                     searchText={searchText}
                     setSearchText={setSearchText}
@@ -97,18 +119,16 @@ function App() {
             </Header>
 
 
-            {/* Main container */}
+         
             <Container>
 
-                {/* =========================================
-                    SIDEBAR
-                    ========================================= */}
+               
 
                 <Sidebar>
 
                     <div className="sidebar__top">
 
-                        {/* Results count */}
+                       
                         <ResultsCount
                             totalnumberofresults={
                                 totalNumberOfResults
@@ -116,38 +136,34 @@ function App() {
                         />
 
 
-                        {/* Sorting */}
-                        <Sorting />
+                        
+						<Sorting onclick={handleChangeSortBy} sortBy={sortBy} />
 
                     </div>
 
 
-                    {/* Job list */}
+                   
                     <JobList
-                        jobitems={jobItemsSliced}
+                        jobitems={jobItemsSlicedandSorted}
                         isloading={isLoading}
                     />
 
 
-                    {/* Pagination */}
+                    
                     <Pagination onclick = {handleChangePage} currentPage = {currentPage} totalNumberOfPages = {totalNumberOfPages}/>
 
                 </Sidebar>
 
 
-                {/* =========================================
-                    SELECTED JOB
-                    ========================================= */}
+               
 
                 <JobItemContent
-                    jobitem={jobItem}
+                    jobitem={jobItem ?? null}
                     isloading={isLoadingJob}
                 />
 
             </Container>
 
-
-            {/* Footer */}
             <Footer />
 			<Toaster position="top-right" />
         </>

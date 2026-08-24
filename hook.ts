@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { BASE_URL } from "./constants";
-import type { JobItem } from "./types";
+import type { JobItem, JobItemExpanded } from "./types";
 import toast from "react-hot-toast";
 
 /* =========================================================
@@ -17,7 +17,7 @@ export function useJobItems({
 }: {
     searchText: string;
 }) {
-    const { data, isPending, isFetching } = useQuery<JobItem[]>({
+    const { data, isLoading, isFetching } = useQuery<JobItem[]>({
         queryKey: ["job-items", searchText],
 
         queryFn: async () => {
@@ -58,7 +58,7 @@ export function useJobItems({
 
     return {
         jobItems,
-        isLoading: isPending, // Note: TanStack v5 renamed isLoading to isPending
+        isLoading,
         isFetching,
         totalNumberOfResults,
     };
@@ -125,10 +125,10 @@ export function useActiveId() {
 export function useJobItem(id: number | null) {
     const {
         data,
-        isPending,
+        isLoading,
         isError,
         error,
-    } = useQuery<JobItem>({
+    } = useQuery<JobItemExpanded>({
         queryKey: ["job-item", id],
 
         queryFn: async () => {
@@ -153,7 +153,7 @@ export function useJobItem(id: number | null) {
 
     return {
         jobItem: data,
-        isLoading: isPending,
+        isLoading,
         isError,
         error,
     };
