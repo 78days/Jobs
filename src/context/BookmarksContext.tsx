@@ -1,17 +1,23 @@
-import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { createContext, useEffect, useState } from "react";
 
 type BookmarksContextValue = {
 	bookmarks: number[];
 	handleBookmarkIds: (id: number) => void;
 };
 
-export const BookmarksContext = createContext<BookmarksContextValue | null>(null);
+export const BookmarksContext = createContext<BookmarksContextValue | null>(
+	null,
+);
 
-export default function BookmarksProvider({ children }: { children: ReactNode }) {
-  const storedBookmarks = localStorage.getItem("bookmarks")
-  const initialBookmarks = storedBookmarks ? JSON.parse(storedBookmarks) : []
-	const [bookmarks, setBookmarks] = useState<number[]>( initialBookmarks);
+export default function BookmarksProvider({
+	children,
+}: {
+	children: ReactNode;
+}) {
+	const storedBookmarks = localStorage.getItem("bookmarks");
+	const initialBookmarks = storedBookmarks ? JSON.parse(storedBookmarks) : [];
+	const [bookmarks, setBookmarks] = useState<number[]>(initialBookmarks);
 
 	const handleBookmarkIds = (id: number) => {
 		setBookmarks((previousBookmarks) =>
@@ -21,9 +27,9 @@ export default function BookmarksProvider({ children }: { children: ReactNode })
 		);
 	};
 
-  useEffect(() => {
-    localStorage.setItem("bookmarks" , JSON.stringify(bookmarks))
-  } , [bookmarks])
+	useEffect(() => {
+		localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+	}, [bookmarks]);
 	return (
 		<BookmarksContext.Provider value={{ bookmarks, handleBookmarkIds }}>
 			{children}

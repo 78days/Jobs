@@ -11,8 +11,8 @@ export default function Sorting({
 		<section className="sorting">
 			<i className="fa-solid fa-arrow-down-short-wide"></i>
 
-			<button 
-				type  = "button"
+			<button
+				type="button"
 				className={`sorting__button sorting__button--relevant ${
 					sortBy === "relevant" ? "sorting__button--active" : ""
 				}`}
@@ -22,7 +22,7 @@ export default function Sorting({
 			</button>
 
 			<button
-				type  = "button"
+				type="button"
 				className={`sorting__button sorting__button--relevant ${
 					sortBy === "recent" ? "sorting__button--active" : ""
 				}`}
