@@ -1,42 +1,44 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
 import { BASE_URL } from "./constants";
 import type { JobItem, JobItemExpanded } from "./types";
 
 /* =========================================================
-   useJobItems
-
+   useSearchQuery
    Fetches the list of jobs based on the search text.
    ========================================================= */
 
-export function useJobItems({ searchText }: { searchText: string }) {
+export function useSearchQuery({ searchText }: { searchText: string }) {
 	const { data, isLoading, isFetching } = useQuery<JobItem[]>({
 		queryKey: ["job-items", searchText],
 
 		queryFn: async () => {
-			let errormessage = "";
+			let errorMessage = "";
+
 			try {
 				const response = await axios.get(
 					`${BASE_URL}?search=${encodeURIComponent(searchText)}`,
 				);
+
 				return response.data.jobItems;
 			} catch (error: unknown) {
 				if (error instanceof Error) {
-					errormessage = error.message;
+					errorMessage = error.message;
 				} else {
-					errormessage = "An unknown error occurred";
+					errorMessage = "An unknown error occurred";
 				}
-				toast.error(`There was an error fetching the jobs. ${errormessage}`);
-				throw error; // CRITICAL: Tells React Query the request failed
+
+				toast.error(`There was an error fetching the jobs. ${errorMessage}`);
+
+				throw error;
 			}
 		},
 
-		// Don't make a request when search is empty
 		enabled: Boolean(searchText),
 
-		// Data remains fresh for 1 hour
 		staleTime: 1000 * 60 * 60,
 
 		retry: false,
@@ -44,9 +46,6 @@ export function useJobItems({ searchText }: { searchText: string }) {
 
 	const jobItems = data ?? [];
 
-	// Only show first 7 jobs
-
-	// Total results before slicing
 	const totalNumberOfResults = jobItems.length;
 
 	return {
@@ -58,8 +57,43 @@ export function useJobItems({ searchText }: { searchText: string }) {
 }
 
 /* =========================================================
-   useActiveId
+   useJobItems
+   Fetches multiple jobs using their IDs.
+   ========================================================= */
 
+export function useJobItems(ids: number[]) {
+	const results = useQueries({
+		queries: ids.map((id) => ({
+			queryKey: ["job-item", id],
+
+			queryFn: async () => {
+				const response = await axios.get(`${BASE_URL}/${id}`);
+
+				return response.data.jobItem as JobItem;
+			},
+
+			staleTime: 1000 * 60 * 60,
+
+			retry: false,
+
+			enabled: Boolean(id),
+		})),
+	});
+
+	const jobItems = results
+		.map((result) => result.data)
+		.filter((jobItem): jobItem is JobItem => jobItem !== undefined);
+
+	const isLoading = results.some((result) => result.isLoading);
+
+	return {
+		jobItems,
+		isLoading,
+	};
+}
+
+/* =========================================================
+   useActiveId
    Reads the selected job ID from the URL hash.
    ========================================================= */
 
@@ -70,7 +104,6 @@ export function useActiveId() {
 		const hashChangeFunction = () => {
 			const hash = window.location.hash.slice(1);
 
-			// No hash
 			if (!hash) {
 				setActiveId(null);
 				return;
@@ -78,7 +111,6 @@ export function useActiveId() {
 
 			const id = Number(hash);
 
-			// Invalid hash
 			if (Number.isNaN(id)) {
 				setActiveId(null);
 				return;
@@ -87,10 +119,8 @@ export function useActiveId() {
 			setActiveId(id);
 		};
 
-		// Check the current hash immediately
 		hashChangeFunction();
 
-		// Listen for future hash changes
 		window.addEventListener("hashchange", hashChangeFunction);
 
 		return () => {
@@ -103,7 +133,6 @@ export function useActiveId() {
 
 /* =========================================================
    useJobItem
-
    Fetches one specific job.
    ========================================================= */
 
@@ -113,19 +142,16 @@ export function useJobItem(id: number | null) {
 
 		queryFn: async () => {
 			const response = await axios.get(`${BASE_URL}/${id}`);
+
 			return response.data.jobItem;
 		},
 
-		// Only fetch when an ID exists
 		enabled: Boolean(id),
 
-		// Cache/freshness
 		staleTime: 1000 * 60 * 60,
 
-		// Don't automatically retry failed requests
 		retry: false,
 
-		// Refetch when browser window gets focus
 		refetchOnWindowFocus: true,
 	});
 
@@ -139,7 +165,6 @@ export function useJobItem(id: number | null) {
 
 /* =========================================================
    useActiveJobItem
-
    Combines URL hash with specific job fetching.
    ========================================================= */
 
@@ -159,7 +184,6 @@ export function useActiveJobItem() {
 
 /* =========================================================
    useDebounce
-
    Waits until the user stops changing a value.
    ========================================================= */
 

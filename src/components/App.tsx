@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { resultsPerPage } from "../../constants.ts";
-import { useActiveJobItem, useDebounce, useJobItems } from "../../hook";
+import { useActiveJobItem, useDebounce, useSearchQuery } from "../../hook";
 import type { typeSortBy } from "../../types.ts";
 import Background from "./Background.tsx";
+import BookmarksButton from "./BookmarksButton.tsx";
 import Container from "./Container";
 import Footer from "./Footer";
 import Header, { Headertop } from "./Header";
@@ -27,7 +28,7 @@ function App() {
 
 	const { jobItem, isLoading: isLoadingJob } = useActiveJobItem();
 
-	const { jobItems, isLoading, totalNumberOfResults } = useJobItems({
+	const { jobItems, isLoading, totalNumberOfResults } = useSearchQuery({
 		searchText: debouncedSearchText,
 	});
 
@@ -67,6 +68,7 @@ function App() {
 			<Header>
 				<Headertop>
 					<Logo />
+					<BookmarksButton />
 				</Headertop>
 
 				<SearchForm searchText={searchText} setSearchText={setSearchText} />

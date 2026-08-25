@@ -3,7 +3,12 @@ import { useState } from "react";
 import BookmarksPopover from "./BookmarksPopover";
 
 export default function BookmarksButton() {
-	const { oepn, setopen } = useState(false);
+	const [open, setopen] = useState(false);
+	document.addEventListener("click", (e : MouseEvent) => {
+		if (e.target !== document.querySelector(".bookmarks-btn")) {
+			setopen(false);
+		}
+	});
 	return (
 		<section>
 			<button
