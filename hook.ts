@@ -69,7 +69,7 @@ export function useJobItems(ids: number[]) {
 			queryFn: async () => {
 				const response = await axios.get(`${BASE_URL}/${id}`);
 
-				return response.data.jobItem as JobItem;
+				return response.data.jobItem as JobItemExpanded;
 			},
 
 			staleTime: 1000 * 60 * 60,
@@ -82,7 +82,7 @@ export function useJobItems(ids: number[]) {
 
 	const jobItems = results
 		.map((result) => result.data)
-		.filter((jobItem): jobItem is JobItem => jobItem !== undefined);
+		.filter((jobItem): jobItem is JobItemExpanded => jobItem !== undefined);
 
 	const isLoading = results.some((result) => result.isLoading);
 

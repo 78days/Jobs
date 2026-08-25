@@ -1,3 +1,3 @@
-export default function Spinner() {
-	return <div className="spinner"></div>;
+export default function Spinner({ variant = "search" }: { variant?: "search" | "job-details" }) {
+	return <div className={`spinner spinner--${variant}`} aria-label="Loading" />;
 }

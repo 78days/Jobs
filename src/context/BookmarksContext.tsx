@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { createContext, useEffect, useState } from "react";
 import { useJobItems } from "../../hook";
-import {  type JobItemExpanded } from "../../types";
+import type { JobItemExpanded } from "../../types";
 
 type BookmarksContextValue = {
 	bookmarks: number[];
@@ -23,8 +23,6 @@ export default function BookmarksProvider({
 	const initialBookmarks = storedBookmarks ? JSON.parse(storedBookmarks) : [];
 	const [bookmarks, setBookmarks] = useState<number[]>(initialBookmarks);
 	const { jobItems: bookmarkedJobItems, isLoading } = useJobItems(bookmarks);
-	console.log("bookmarks:", bookmarks);
-	console.log("bookmarkedJobItems:", bookmarkedJobItems);
 	const handleBookmarkIds = (id: number) => {
 		setBookmarks((previousBookmarks) =>
 			previousBookmarks.includes(id)

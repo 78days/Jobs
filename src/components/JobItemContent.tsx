@@ -11,7 +11,7 @@ export default function JobItemContent({ jobitem, isloading }: jobitemprop) {
 		return (
 			<section className="job-details">
 				<div>
-					<Spinner />
+					<Spinner variant="job-details" />
 				</div>
 			</section>
 		);

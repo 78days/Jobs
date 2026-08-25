@@ -1,27 +1,93 @@
-# React + TypeScript + Vite
+# Job Search Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+JOBS is a responsive remote developer job search application built with React and TypeScript. Users can search for jobs, sort and paginate results, open job details, and save bookmarks that persist in local storage.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Debounced job search to reduce unnecessary API requests
+- Job results sorted by relevance or recency
+- Paginated search results
+- Detailed job views opened through URL hash navigation
+- Bookmark jobs and persist them with `localStorage`
+- Loading spinners for search results, job details, and bookmarks
+- Toast notifications for API errors
+- Responsive layout for desktop and mobile screens
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 18
+- TypeScript
+- Vite
+- TanStack React Query
+- Axios
+- React Hot Toast
+- Radix UI Icons
+- ESLint
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+### Prerequisites
+
+- Node.js 18 or newer
+- npm
+
+### Installation
+
+```bash
+npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Run Locally
+
+```bash
+npm run dev
+```
+
+Open the local URL shown by Vite in your browser.
+
+## Available Scripts
+
+
+| Command           | Description                              |
+| ----------------- | ---------------------------------------- |
+| `npm run dev`     | Start the Vite development server        |
+| `npm run build`   | Type-check and create a production build |
+| `npm run lint`    | Run ESLint with zero warnings allowed    |
+| `npm run preview` | Preview the production build locally     |
+| `npm run biome`   | Format and check files with Biome        |
+
+
+## Project Structure
+
+```text
+.
+├── src/
+│   ├── components/       # UI components for search, jobs, bookmarks, and layout
+│   ├── context/          # Bookmark state and persistence
+│   ├── main.tsx          # React and React Query application setup
+│   └── index.css         # Global styles and responsive layout
+├── constants.ts          # API URL and pagination settings
+├── hook.ts               # Data-fetching and shared React hooks
+└── types.ts              # Shared TypeScript models
+```
+
+## Data Fetching
+
+Job data is fetched from the RMTDev course API with Axios and cached through TanStack React Query. Search requests are delayed until the user stops typing, and completed queries remain fresh for one hour.
+
+The API endpoint is configured in `constants.ts`:
+
+```ts
+export const BASE_URL =
+  "https://bytegrad.com/course-assets/projects/rmtdev/api/data";
+```
+
+## Validation
+
+The project currently uses the following checks before production builds:
+
+```bash
+npm run lint
+npm run build
+```
+
