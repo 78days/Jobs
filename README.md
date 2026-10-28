@@ -1,6 +1,10 @@
 # Job Search Web App
 
-JOBS is a responsive remote developer job search application built with React and TypeScript. Users can search for jobs, sort and paginate results, open job details, and save bookmarks that persist in local storage.
+Jobs is a responsive remote developer job search application built with React, TypeScript, and Vite. It helps users discover relevant opportunities, sort and paginate results, inspect detailed job listings, and save bookmarks that persist across sessions.
+
+## Overview
+
+Jobs is a polished job discovery experience for developers looking for remote work. The app combines debounced search, filtering, pagination, bookmark management, and detailed job views into a clean, mobile-friendly interface designed for quick browsing and efficient decision-making.
 
 ## Features
 
@@ -64,12 +68,11 @@ npm install --global vercel
 vercel
 ```
 
-Use `vercel --prod` for later production deployments. The Vercel CLI detects the Vite build command and output directory automatically; choose `no` when asked whether to customize the settings unless those defaults have changed.
+Use `vercel --prod` for later production deployments. The Vercel CLI detects the Vite build command and output directory automatically; choose `no` when asked whether to customize the settings unless you want to override the defaults.
 
-The initial project was created successfully, but connecting the GitHub repository requires a GitHub Login Connection in Vercel. Until that connection is added, deploy with the CLI or connect the repository from the Vercel project settings after authenticating GitHub.
+The initial project was created successfully, but connecting the GitHub repository requires a GitHub Login Connection in Vercel. Until that connection is added, deploy with the CLI or connect the repository manually after enabling the integration.
 
 ## Available Scripts
-
 
 | Command           | Description                              |
 | ----------------- | ---------------------------------------- |
@@ -78,7 +81,6 @@ The initial project was created successfully, but connecting the GitHub reposito
 | `npm run lint`    | Run ESLint with zero warnings allowed    |
 | `npm run preview` | Preview the production build locally     |
 | `npm run biome`   | Format and check files with Biome        |
-
 
 ## Project Structure
 
@@ -91,12 +93,13 @@ The initial project was created successfully, but connecting the GitHub reposito
 │   └── index.css         # Global styles and responsive layout
 ├── constants.ts          # API URL and pagination settings
 ├── hook.ts               # Data-fetching and shared React hooks
-└── types.ts              # Shared TypeScript models
+├── types.ts              # Shared TypeScript models
+└── README.md             # Project documentation
 ```
 
 ## Data Fetching
 
-Job data is fetched from the RMTDev course API with Axios and cached through TanStack React Query. Search requests are delayed until the user stops typing, and completed queries remain fresh for one hour.
+Job data is fetched from the RMTDev course API with Axios and cached through TanStack React Query. Search requests are delayed until the user stops typing, and completed queries remain fresh for optimal performance.
 
 The API endpoint is configured in `constants.ts`:
 
